@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
-from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
@@ -49,5 +49,6 @@ def build_preprocessor(df:pd.DataFrame, cfg:PreprocessConfig):
     # Post transform - feature list
     def get_feature_names() -> list[str]:
         return preprocessor.named_steps['ct'].get_feature_names_out().tolist()
+
 
     return preprocessor, get_feature_names
