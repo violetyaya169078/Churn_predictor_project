@@ -55,8 +55,6 @@ The structure of this project includes a main folder named **project** and the s
 This folder is home for the `preprocessing.py` and `churn_predictor.py` script that calls the transformers and run through the churn prediction process.
 
 ### preprocessing.py
-**`FeatureEngineer`**: This class controls the feature interactions, the new features one wish to add to the model training can be defined from here.
-
 **`PreprocessConfig`**: This class is for dropping redundant columns.
 
 `build_preprocessor()`: This function creates a Scikit-learn preprocessing pipeline, based on the settings in `PreprocessConfig`, helps selecting and dealing with the numeric and categorical columns. 
