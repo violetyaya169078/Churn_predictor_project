@@ -9,9 +9,7 @@ class Config:
     SEED = 42
 
     # Load data
-    DATA_URL = ("https://raw.githubusercontent.com/github7891/PY-DA-Team2/"
-       "feature-engineer/data-preprocessing/data/processed/"
-       "Dataset_ATS_v2_processed.csv")
+    DATA_URL = ("https://raw.githubusercontent.com/github7891/WIL-Deliverable/refs/heads/main/Predictive_Modeling/datasets/Dataset_ATS_v2.csv")
     
     # Split (default)
     VAL_SIZE = 0.15
