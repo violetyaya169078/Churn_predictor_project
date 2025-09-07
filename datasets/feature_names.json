@@ -1,14 +1,12 @@
 [
   "SeniorCitizen",
-  "Dependents",
   "tenure",
+  "MonthlyCharges",
+  "Gender",
+  "Dependents",
   "PhoneService",
   "MultipleLines",
-  "MonthlyCharges",
-  "gender_Female",
-  "gender_Male",
-  "InternetService_DSL",
-  "InternetService_Fiber optic",
+  "InternetService",
   "Contract_Month-to-month",
   "Contract_One year",
   "Contract_Two year"

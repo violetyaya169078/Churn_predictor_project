@@ -1,12 +1,12 @@
 {
   "units1": 32,
-  "units2": 8,
-  "lr": 0.00044200189348348324,
-  "l2": 0.0015246137955035573,
-  "drop": 0.25,
-  "tuner/epochs": 30,
-  "tuner/initial_epoch": 10,
-  "tuner/bracket": 1,
+  "units2": 48,
+  "units3": 8,
+  "lr": 0.001675450818342236,
+  "dropout": 0.2,
+  "tuner/epochs": 10,
+  "tuner/initial_epoch": 4,
+  "tuner/bracket": 2,
   "tuner/round": 1,
-  "tuner/trial_id": "0074"
+  "tuner/trial_id": "0054"
 }
