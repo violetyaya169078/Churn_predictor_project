@@ -9,19 +9,25 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.calibration import CalibratedClassifierCV
 
 # Build keras model
-def build_model(input_dim:int, units1=32, units2=16, lr=1e-3, l2=1e-4, drop=0.2):
+def build_model(input_dim:int, units1:int, units2:int, units3:int, lr:float, dropout:float, l2:float=1e-4):
     # Initialise ANN
     model = Sequential()
     
     # Input layer and 1st hidden layer
-    model.add(Dense(units1, kernel_initializer='he_uniform', activation='relu', input_shape=(input_dim,), kernel_regularizer=reg.l2(l2)))
+    model.add(Dense(units1, kernel_initializer='he_normal', kernel_regularizer=reg.l2(l2), use_bias=False, input_shape=(input_dim,)))
     model.add(BatchNormalization())
-    model.add(Dropout(drop))
+    model.add(tf.keras.layers.Activation('relu'))
+    model.add(Dropout(dropout))
     
     # 2nd layer
-    model.add(Dense(units2, kernel_initializer='he_uniform', activation='relu', kernel_regularizer=reg.l2(l2)))
+    model.add(Dense(units2, kernel_initializer='he_normal', kernel_regularizer=reg.l2(l2), use_bias=False))
     model.add(BatchNormalization())
-    model.add(Dropout(drop))
+    model.add(tf.keras.layers.Activation('relu'))
+
+    # 3rd layer
+    model.add(Dense(units3, kernel_initializer='he_normal', kernel_regularizer=reg.l2(l2), use_bias=False))
+    model.add(BatchNormalization())
+    model.add(tf.keras.layers.Activation('relu'))
     
     # Output layer
     model.add(Dense(1, kernel_initializer='glorot_uniform', activation='sigmoid'))
@@ -32,12 +38,12 @@ def build_model(input_dim:int, units1=32, units2=16, lr=1e-3, l2=1e-4, drop=0.2)
     return model 
 
 def hypermodel(hp, input_dim:int):
-    u1 = hp.Int('units1', min_value=16, max_value=64, step=16)
-    u2 = hp.Int('units2', min_value=8, max_value=32, step=8)
+    u1 = hp.Int('units1', min_value=32, max_value=128, step=32)
+    u2 = hp.Int('units2', min_value=16, max_value=64, step=16)
+    u3 = hp.Int('units3', min_value=8, max_value=32, step=8)
     lr = hp.Float('lr', 2e-4, 2e-3, sampling='log')
-    l2 = hp.Float('l2', 2e-4, 2e-3, sampling='log')
-    dr = hp.Float('drop', 0.25, 0.4, step=0.05)
-    return build_model(input_dim, u1, u2, lr, l2, dr)
+    dr = hp.Float('dropout', 0.2, 0.4, step=0.1)
+    return build_model(input_dim, u1, u2, u3, lr, dr)
 
 def make_tuner(input_dim:int, project_name='krs_hyperband', directory='hyperband'):
     tuner = kt.Hyperband(
@@ -58,5 +64,4 @@ def build_gb(random_state:int=42, **kwargs) -> GradientBoostingClassifier:
 def calibrate_prefit(estimator, X_valid, y_valid, method:str='isotonic') -> CalibratedClassifierCV:
     cal = CalibratedClassifierCV(estimator=estimator, method=method, cv='prefit')
     cal.fit(X_valid, y_valid)
-
     return cal
