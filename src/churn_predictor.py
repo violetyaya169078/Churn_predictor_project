@@ -86,7 +86,7 @@ class ChurnPredictor:
         return weights_dict
 
     def fit_final(self, X_tr, y_tr, X_va, y_va, 
-                  best_params:dict, epochs=50, batch_size=32, class_weights=None, 
+                  best_params:dict, epochs=Config.EPOCHS, batch_size=32, class_weights=None, 
                   save_path:str | None=None, use_gpu: bool=True, use_mixed_precision: bool=False):
         # Speed up tuning and training time
         policy_ctx = None
@@ -95,8 +95,8 @@ class ChurnPredictor:
             
         tf.keras.backend.clear_session()
         self.model = build_model(X_tr.shape[1], **best_params)
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_auprc', mode='max', patience=8, restore_best_weights=True),
-                    ReduceLROnPlateau(monitor='val_auprc', mode='max', factor=0.5, patience=4, verbose=0),
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_auprc', mode='max', patience=2, min_delta=1e-4, restore_best_weights=True),
+                    ReduceLROnPlateau(monitor='val_auprc', mode='max', factor=0.5, patience=2, verbose=0),
                     # Keep max auprc
                     ModelCheckpoint("models/best_churn_model.keras", monitor='val_auprc', mode='max', save_best_only=True)]
 
@@ -105,7 +105,7 @@ class ChurnPredictor:
         with tf.device(device_name):
             history = self.model.fit(X_tr, y_tr, 
                     validation_data=(X_va, y_va), 
-                    epochs=epochs,
+                    epochs=Config.EPOCHS,
                     batch_size=batch_size,
                     callbacks=callbacks, 
                     class_weight=class_weights,
@@ -128,11 +128,12 @@ class ChurnPredictor:
     # Fit with tensorboard
     def fit_with_tensorboard(self, X_train, y_train, X_val, y_val, 
                              best_params:dict, 
-                             epochs:int, batch_size:int, class_weights=None, 
+                             batch_size:int, class_weights=None, epochs=Config.EPOCHS, 
                              tb_cb:Callback | None=None):
         tf.keras.backend.clear_session()
         self.model = build_model(X_train.shape[1], **best_params)
-        cbs = [tf.keras.callbacks.EarlyStopping(monitor='val_auprc', mode='max', patience=8, restore_best_weights=True)]
+        cbs = [tf.keras.callbacks.EarlyStopping(monitor='val_auprc', mode='max', patience=2, min_delta=1e-4, restore_best_weights=True), 
+               ReduceLROnPlateau(monitor='val_auprc', mode='max', factor=0.5, patience=2, verbose=0)]
         
         if tb_cb is not None:
             cbs.append(tb_cb)
@@ -140,7 +141,7 @@ class ChurnPredictor:
         history = self.model.fit(
             X_train, y_train, 
             validation_data=(X_val, y_val), 
-            epochs=epochs, 
+            epochs=Config.EPOCHS, 
             batch_size=batch_size, 
             class_weight=class_weights, 
             callbacks=cbs, 
