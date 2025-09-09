@@ -17,6 +17,6 @@ class Config:
     
     # Train
     BATCH_SIZE = 32
-    EPOCHS = 50
-    EARLY_STOP_PATIENCE = 10
+    EPOCHS = 15
     MIN_VAL_ACCURACY = 0.8
+
