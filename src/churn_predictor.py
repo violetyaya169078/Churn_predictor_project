@@ -59,7 +59,7 @@ class ChurnPredictor:
         self.best_hp = self.tuner.get_best_hyperparameters(1)[0]
         return self.best_hp
         
-    def pick_best_params(self, min_val_acc=Config.MIN_VAL_ACCURACY, keys=('units1', 'units2', 'units3', 'lr', 'dropout')):
+    def pick_best_params(self, min_val_acc=Config.MIN_VAL_ACCURACY, keys=('units1', 'units2', 'lr', 'dropout')):
         trials = [t for t in self.tuner.oracle.get_best_trials() if t.status == 'COMPLETED']
         trials = [t for t in trials
                  if (t.metrics.get_last_value('val_accuracy') is not None 
