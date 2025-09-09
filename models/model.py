@@ -9,7 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.calibration import CalibratedClassifierCV
 
 # Build keras model
-def build_model(input_dim:int, units1:int, units2:int, units3:int, lr:float, dropout:float, l2:float=1e-4):
+def build_model(input_dim:int, units1:int, units2:int, lr:float, dropout:float, l2:float=1e-4):
     # Initialise ANN
     model = Sequential()
     
@@ -21,11 +21,6 @@ def build_model(input_dim:int, units1:int, units2:int, units3:int, lr:float, dro
     
     # 2nd layer
     model.add(Dense(units2, kernel_initializer='he_normal', kernel_regularizer=reg.l2(l2), use_bias=False))
-    model.add(BatchNormalization())
-    model.add(tf.keras.layers.Activation('relu'))
-
-    # 3rd layer
-    model.add(Dense(units3, kernel_initializer='he_normal', kernel_regularizer=reg.l2(l2), use_bias=False))
     model.add(BatchNormalization())
     model.add(tf.keras.layers.Activation('relu'))
     
@@ -40,10 +35,9 @@ def build_model(input_dim:int, units1:int, units2:int, units3:int, lr:float, dro
 def hypermodel(hp, input_dim:int):
     u1 = hp.Int('units1', min_value=32, max_value=128, step=32)
     u2 = hp.Int('units2', min_value=16, max_value=64, step=16)
-    u3 = hp.Int('units3', min_value=8, max_value=32, step=8)
     lr = hp.Float('lr', 2e-4, 2e-3, sampling='log')
     dr = hp.Float('dropout', 0.2, 0.4, step=0.1)
-    return build_model(input_dim, u1, u2, u3, lr, dr)
+    return build_model(input_dim, u1, u2, lr, dr)
 
 def make_tuner(input_dim:int, project_name='krs_hyperband', directory='hyperband'):
     tuner = kt.Hyperband(
